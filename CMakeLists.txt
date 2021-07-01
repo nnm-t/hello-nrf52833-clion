@@ -54,8 +54,9 @@ include_directories(
 )
 
 list(APPEND SOURCE_FILES
-        "${PROJ_DIR}/main.c"
-        )
+        ${PROJ_DIR}/main.c
+        ${PROJ_DIR}/cppmain.cpp
+)
 
 list(APPEND LIB_FILES
         "${SDK_ROOT}/external/nrf_cc310/lib"
