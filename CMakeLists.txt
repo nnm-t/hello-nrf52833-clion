@@ -56,7 +56,7 @@ include_directories(
 )
 
 file(GLOB_RECURSE SOURCES
-        # ${SDK_ROOT}/modules/nrfx/mdk/gcc_startup_nrf52833.S
+        ${SDK_ROOT}/modules/nrfx/mdk/gcc_startup_nrf52833.S
         ${SDK_ROOT}/components/libraries/log/src/nrf_log_frontend.c
         ${SDK_ROOT}/components/libraries/log/src/nrf_log_str_formatter.c
         ${SDK_ROOT}/components/boards/boards.c
@@ -85,6 +85,8 @@ add_definitions(
         -DFLOAT_ABI_HARD
         -DNRF52833_XXAA
         -DNRFX_COREDEP_DELAY_US_LOOP_CYCLES=3
+        -D__HEAP_SIZE=4096
+        -D__STACK_SIZE=4096
         # -DMBEDTLS_CONFIG_FILE=\"nrf_crypto_mbedtls_config.h\"
         # -DNRF_CRYPTO_MAX_INSTANCE_COUNT=1
         # -DBLE_STACK_SUPPORT_REQD
