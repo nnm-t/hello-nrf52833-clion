@@ -6,8 +6,7 @@ set(CMAKE_C_COMPILER_WORKS 1)
 set(CMAKE_CXX_COMPILER_WORKS 1)
 set(CMAKE_C_COMPILER arm-none-eabi-gcc)
 set(CMAKE_CXX_COMPILER arm-none-eabi-g++)
-set(AS arm-none-eabi-as)
-set(AR arm-none-eabi-ar)
+set(CMAKE_ASM_COMPILER arm-none-eabi-gcc)
 set(OBJCOPY arm-none-eabi-objcopy)
 set(OBJDUMP arm-none-eabi-objdump)
 set(SIZE arm-none-eabi-size)
@@ -101,13 +100,17 @@ add_definitions(
         # -DuECC_VLI_NATIVE_LITTLE_ENDIAN=1
 )
 
+# CMake 3.18以降でASM向けのフラグ -Dhogefuga が --defsym hogefuga に置き換えられるためエラーを吐く
+# そこで、"--defsym" を "-D " へ置き換える ( https://github.com/DynamoRIO/dynamorio/issues/4370 )
+# todo: 現時点ではこれでもASがCMAKE_ASM_FLAGSを正しく解釈できない
+set(CMAKE_ASM_DEFINE_FLAG "-D ")
+
 set(CPU_FLAGS "-mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16")
 set(COMMON_FLAGS "-mthumb -mabi=aapcs -Wall -Werror -O3 -g3 -ffunction-sections -fdata-sections -fno-strict-aliasing -fno-builtin -fshort-enums ${CPU_FLAGS}")
 
 set(CMAKE_C_FLAGS "${COMMON_FLAGS}")
 set(CMAKE_CXX_FLAGS "${COMMON_FLAGS}")
-set(CMAKE_ASM_FLAGS "-g3 mthumb -mabi=aapcs ${CPU_FLAGS}")
-# -Map=?
+set(CMAKE_ASM_FLAGS "-g3 -mthumb -mabi=aapcs ${CPU_FLAGS}")
 set(CMAKE_EXE_LINKER_FLAGS "-mthumb -mabi=aapcs -std=gnu++14 -std=gnu11 -L\"${SDK_ROOT}/modules/nrfx/mdk\" -T${LINKER_SCRIPT} ${CPU_FLAGS} -Wl,--gc-sections --specs=nano.specs -lc -lnosys -lm")
 
 set(TARGET_NAME ${PROJECT_NAME})
