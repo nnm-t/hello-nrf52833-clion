@@ -2,11 +2,27 @@ set(CMAKE_SYSTEM_NAME Generic)
 set(CMAKE_SYSTEM_VERSION 1)
 cmake_minimum_required(VERSION 3.19)
 
+# ToolchainとnRF5 SDKのPathを環境変数から読み込む (実際はIDE設定などで流し込めばOK)
+set(TOOLCHAIN_PATH $ENV{TOOLCHAIN_PATH})
+set(SDK_ROOT $ENV{SDK_ROOT})
+message("Toolchain directory: ${TOOLCHAIN_PATH}")
+message("SDK root directory: ${SDK_ROOT}")
+
+if (WIN32)
+    # Windowsのみexe形式
+    set(TOOLCHAIN_EXTENSION ".exe")
+else()
+    set(TOOLCHAIN_EXTENSION "")
+endif()
+
+# ASMのenable_languageを設定しておく
+enable_language(ASM)
 set(CMAKE_C_COMPILER_WORKS 1)
 set(CMAKE_CXX_COMPILER_WORKS 1)
-set(CMAKE_C_COMPILER arm-none-eabi-gcc)
-set(CMAKE_CXX_COMPILER arm-none-eabi-g++)
-set(CMAKE_ASM_COMPILER arm-none-eabi-gcc)
+# コンパイラは拡張子付きのフルパスで指定する (CMAKE_ASM_COMPILERの差し替えでは必須)
+set(CMAKE_C_COMPILER "${TOOLCHAIN_PATH}/arm-none-eabi-gcc${TOOLCHAIN_EXTENSION}")
+set(CMAKE_CXX_COMPILER "${TOOLCHAIN_PATH}/arm-none-eabi-g++${TOOLCHAIN_EXTENSION}")
+set(CMAKE_ASM_COMPILER "${TOOLCHAIN_PATH}/arm-none-eabi-gcc${TOOLCHAIN_EXTENSION}")
 set(OBJCOPY arm-none-eabi-objcopy)
 set(OBJDUMP arm-none-eabi-objdump)
 set(SIZE arm-none-eabi-size)
@@ -19,9 +35,6 @@ set(CMAKE_CXX_STANDARD 14)
 
 set(PROJ_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
 set(LINKER_SCRIPT ${PROJ_DIR}/generic_gcc_nrf52.ld)
-
-set(SDK_ROOT $ENV{SDK_ROOT})
-message("SDK root directory: ${SDK_ROOT}")
 
 include_directories(
         ${PROJ_DIR}/Inc
@@ -74,7 +87,7 @@ file(GLOB_RECURSE SOURCES
         ${SDK_ROOT}/modules/nrfx/soc/nrfx_atomic.c
         ${PROJ_DIR}/Src/*.*
         ${SDK_ROOT}/modules/nrfx/mdk/system_nrf52833.c
-        )
+)
 
 add_definitions(
         -DBOARD_PCA10100
@@ -102,8 +115,7 @@ add_definitions(
 
 # CMake 3.18以降でASM向けのフラグ -Dhogefuga が --defsym hogefuga に置き換えられるためエラーを吐く
 # そこで、"--defsym" を "-D " へ置き換える ( https://github.com/DynamoRIO/dynamorio/issues/4370 )
-# todo: 現時点ではこれでもASがCMAKE_ASM_FLAGSを正しく解釈できない
-set(CMAKE_ASM_DEFINE_FLAG "-D ")
+set(CMAKE_ASM_DEFINE_FLAG "-D")
 
 set(CPU_FLAGS "-mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16")
 set(COMMON_FLAGS "-mthumb -mabi=aapcs -Wall -Werror -O3 -g3 -ffunction-sections -fdata-sections -fno-strict-aliasing -fno-builtin -fshort-enums ${CPU_FLAGS}")

@@ -11,12 +11,13 @@ C++対応
   - またはCMakeが実行できる開発環境
 
 ### 環境変数
-
+- `TOOLCHAIN_PATH`: [GNU Arm Embedded Toolchain](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm) の場所を指定
 - `nRF5_SDK`: [nRF5 SDK](https://www.nordicsemi.com/Products/Development-software/nrf5-sdk) の場所を指定
-  - CLionのCMakeプロファイルで設定しておく
+
+これらはCLionのCMakeプロファイルで設定しておく
 
 #### Path
 
 - 下記ツールのインストール先のパスを通す
   - [nRF Command Line Tools](https://www.nordicsemi.com/Products/Development-tools/nrf-command-line-tools/download)
-  - [GNU Arm Embedded Toolchain](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm)
+  - GNU Arm Embedded Toolchain
